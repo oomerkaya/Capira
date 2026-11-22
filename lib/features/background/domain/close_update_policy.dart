@@ -12,6 +12,8 @@ import 'package:capira/features/market/domain/services/refresh_policy.dart';
 ///   the app already refreshed after the close costs nothing.
 /// - FX and metals every day; stocks and funds only when the close was on
 ///   a trading day (no weekends, no holidays).
+/// - Funds have one price per day: fetched only when they were not fetched
+///   at all on the close's day (the app may have done it in the session).
 /// - The day's value is recorded for the close's day, so the history has
 ///   a point per day even when the app is not opened.
 abstract final class CloseUpdatePolicy {
@@ -51,13 +53,22 @@ abstract final class CloseUpdatePolicy {
     final trading = isTradingDay(close, calendar);
     return {
       for (final c in QuoteCategory.values)
-        if (_isStale(lastSuccess[c], close) &&
+        if (_isStale(c, lastSuccess[c], close) &&
             (trading ||
                 (c != QuoteCategory.stocks && c != QuoteCategory.funds)))
           c,
     };
   }
 
-  static bool _isStale(DateTime? last, DateTime close) =>
-      last == null || last.isBefore(close);
+  static bool _isStale(QuoteCategory c, DateTime? last, DateTime close) {
+    if (last == null) return true;
+    if (c == QuoteCategory.funds) return !_sameIstanbulDay(last, close);
+    return last.isBefore(close);
+  }
+
+  static bool _sameIstanbulDay(DateTime a, DateTime b) {
+    final x = RefreshPolicy.toIstanbul(a);
+    final y = RefreshPolicy.toIstanbul(b);
+    return x.year == y.year && x.month == y.month && x.day == y.day;
+  }
 }
