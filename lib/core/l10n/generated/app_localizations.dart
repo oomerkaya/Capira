@@ -1433,13 +1433,13 @@ abstract class AppLocalizations {
   /// No description provided for @historyEmpty.
   ///
   /// In tr, this message translates to:
-  /// **'Grafik, uygulamayı açtığın her gün kaydedilen değerlerle oluşur. Birkaç gün sonra burada görünecek.'**
+  /// **'Grafik, her gün kaydedilen değerlerle oluşur. Birkaç gün sonra burada görünecek.'**
   String get historyEmpty;
 
   /// No description provided for @historyNote.
   ///
   /// In tr, this message translates to:
-  /// **'Uygulamanın açıldığı günlerin değeri kaydedilir. Alım ve satımlar da değeri değiştirir.'**
+  /// **'Her günün borsa kapanışı sonrası değeri kaydedilir (arka plan güncellemesi kapalıysa yalnızca uygulamanın açıldığı günler). Alım ve satımlar da değeri değiştirir.'**
   String get historyNote;
 
   /// No description provided for @historyChartLabel.
@@ -1505,7 +1505,7 @@ abstract class AppLocalizations {
   /// No description provided for @summaryEmpty.
   ///
   /// In tr, this message translates to:
-  /// **'Özet için önceki günlerin değeri gerekiyor; uygulamayı yarın açtığında burada olacak.'**
+  /// **'Özet için önceki günlerin değeri gerekiyor; yarın burada olacak.'**
   String get summaryEmpty;
 
   /// No description provided for @goalsTitle.

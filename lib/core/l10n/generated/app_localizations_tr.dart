@@ -737,11 +737,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get historyEmpty =>
-      'Grafik, uygulamayı açtığın her gün kaydedilen değerlerle oluşur. Birkaç gün sonra burada görünecek.';
+      'Grafik, her gün kaydedilen değerlerle oluşur. Birkaç gün sonra burada görünecek.';
 
   @override
   String get historyNote =>
-      'Uygulamanın açıldığı günlerin değeri kaydedilir. Alım ve satımlar da değeri değiştirir.';
+      'Her günün borsa kapanışı sonrası değeri kaydedilir (arka plan güncellemesi kapalıysa yalnızca uygulamanın açıldığı günler). Alım ve satımlar da değeri değiştirir.';
 
   @override
   String historyChartLabel(String from, String to) {
@@ -779,7 +779,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get summaryEmpty =>
-      'Özet için önceki günlerin değeri gerekiyor; uygulamayı yarın açtığında burada olacak.';
+      'Özet için önceki günlerin değeri gerekiyor; yarın burada olacak.';
 
   @override
   String get goalsTitle => 'Hedefler';

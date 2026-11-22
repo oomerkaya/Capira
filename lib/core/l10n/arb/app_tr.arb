@@ -352,8 +352,8 @@
   "historyRangeQuarter": "3 ay",
   "historyRangeYear": "1 yıl",
   "historyRangeAll": "Tümü",
-  "historyEmpty": "Grafik, uygulamayı açtığın her gün kaydedilen değerlerle oluşur. Birkaç gün sonra burada görünecek.",
-  "historyNote": "Uygulamanın açıldığı günlerin değeri kaydedilir. Alım ve satımlar da değeri değiştirir.",
+  "historyEmpty": "Grafik, her gün kaydedilen değerlerle oluşur. Birkaç gün sonra burada görünecek.",
+  "historyNote": "Her günün borsa kapanışı sonrası değeri kaydedilir (arka plan güncellemesi kapalıysa yalnızca uygulamanın açıldığı günler). Alım ve satımlar da değeri değiştirir.",
   "historyChartLabel": "Portföy değeri grafiği, {from} ile {to} arası",
   "@historyChartLabel": {
     "placeholders": {
@@ -381,7 +381,7 @@
       }
     }
   },
-  "summaryEmpty": "Özet için önceki günlerin değeri gerekiyor; uygulamayı yarın açtığında burada olacak.",
+  "summaryEmpty": "Özet için önceki günlerin değeri gerekiyor; yarın burada olacak.",
   "goalsTitle": "Hedefler",
   "goalsEmpty": "Bir birikim hedefi koy: örneğin 100 gram altın ya da 25.000 $ portföy.",
   "goalsAdd": "Hedef ekle",
