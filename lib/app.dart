@@ -2,6 +2,7 @@ import 'package:capira/core/l10n/l10n.dart';
 import 'package:capira/core/router/app_router.dart';
 import 'package:capira/core/theme/app_theme.dart';
 import 'package:capira/core/widgets/amount_display.dart';
+import 'package:capira/features/background/presentation/background_update.dart';
 import 'package:capira/features/market/presentation/price_refresh_controller.dart';
 import 'package:capira/features/portfolio/portfolio_providers.dart';
 import 'package:capira/features/portfolio/presentation/kap_refresh_controller.dart';
@@ -19,7 +20,8 @@ class CapiraApp extends ConsumerWidget {
     ref
       ..listen(priceRefreshControllerProvider, (_, _) {})
       ..listen(kapRefreshControllerProvider, (_, _) {})
-      ..listen(snapshotRecorderProvider, (_, _) {});
+      ..listen(snapshotRecorderProvider, (_, _) {})
+      ..listen(backgroundUpdateProvider, (_, _) {});
     return MaterialApp.router(
       onGenerateTitle: (context) => context.l10n.appTitle,
       debugShowCheckedModeBanner: false,

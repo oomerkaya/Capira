@@ -18,4 +18,9 @@ abstract interface class SettingsRepository {
   Future<Result<bool>> getPrivacyMode();
 
   Future<Result<void>> setPrivacyMode({required bool hidden});
+
+  /// Daily background update after the close; `true` when never set.
+  Future<Result<bool>> getBackgroundUpdate();
+
+  Future<Result<void>> setBackgroundUpdate({required bool enabled});
 }

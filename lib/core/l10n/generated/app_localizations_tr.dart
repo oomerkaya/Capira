@@ -867,4 +867,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String portfolioPnlRateNote(String symbol) {
     return '$symbol bazında gerçek kâr/zarar, alım günü kuru kayıtlı alımlar için hesaplanır (bundan sonraki alımlar).';
   }
+
+  @override
+  String get settingsBackgroundTitle => 'Günlük arka plan güncellemesi';
+
+  @override
+  String get settingsBackgroundSubtitle =>
+      'Borsa kapanışından sonra fiyatlar, KAP ve günün değeri; uygulama kapalıyken de. Günde en fazla 5 istek.';
 }

@@ -109,7 +109,7 @@ class PriceRefreshController extends Notifier<PriceRefreshState> {
     if (!ref.mounted) return const {};
 
     final now = clock();
-    final lastSuccess = _lastSuccessByCategory(quotes)
+    final lastSuccess = RefreshPolicy.lastSuccessByCategory(quotes)
       // Stocks count as fetched only after a whole-market snapshot.
       ..[QuoteCategory.stocks] = stocksSnapshot;
     final due = <QuoteCategory>{
@@ -185,21 +185,5 @@ class PriceRefreshController extends Notifier<PriceRefreshState> {
     _quotaSyncedAt = now;
     final result = await ref.read(marketRepositoryProvider).syncQuota();
     if (ref.mounted && result is Success) ref.invalidate(quotaUsageProvider);
-  }
-
-  /// Newest `fetchedAt` per category (each category is fetched as a
-  /// whole). Stocks are overridden by the whole-market snapshot time.
-  static Map<QuoteCategory, DateTime?> _lastSuccessByCategory(
-    List<Quote> quotes,
-  ) {
-    final result = <QuoteCategory, DateTime?>{};
-    for (final q in quotes) {
-      final category = QuoteCategory.of(q.instrument.type);
-      final current = result[category];
-      if (current == null || q.fetchedAt.isAfter(current)) {
-        result[category] = q.fetchedAt;
-      }
-    }
-    return result;
   }
 }

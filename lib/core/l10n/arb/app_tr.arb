@@ -435,5 +435,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsBackgroundTitle": "Günlük arka plan güncellemesi",
+  "settingsBackgroundSubtitle": "Borsa kapanışından sonra fiyatlar, KAP ve günün değeri; uygulama kapalıyken de. Günde en fazla 5 istek."
 }

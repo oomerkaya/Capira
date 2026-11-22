@@ -1,5 +1,18 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- The background update (workmanager) runs as plain WorkManager work:
+         no notifications, no foreground service. Drop what the plugin adds
+         for those, least privilege. -->
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_SHORT_SERVICE"
+        tools:node="remove" />
     <application
         android:label="Capira"
         android:name="${applicationName}"

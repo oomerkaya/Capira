@@ -1663,6 +1663,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{symbol} bazında gerçek kâr/zarar, alım günü kuru kayıtlı alımlar için hesaplanır (bundan sonraki alımlar).'**
   String portfolioPnlRateNote(String symbol);
+
+  /// No description provided for @settingsBackgroundTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Günlük arka plan güncellemesi'**
+  String get settingsBackgroundTitle;
+
+  /// No description provided for @settingsBackgroundSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Borsa kapanışından sonra fiyatlar, KAP ve günün değeri; uygulama kapalıyken de. Günde en fazla 5 istek.'**
+  String get settingsBackgroundSubtitle;
 }
 
 class _AppLocalizationsDelegate

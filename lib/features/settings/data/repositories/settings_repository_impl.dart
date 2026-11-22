@@ -12,6 +12,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const themeKey = 'theme_preference';
   static const displayCurrencyKey = 'display_currency';
   static const privacyKey = 'privacy_mode';
+  static const backgroundKey = 'background_update';
 
   final SettingsLocalDataSource _local;
 
@@ -57,6 +58,14 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<Result<void>> setPrivacyMode({required bool hidden}) =>
       _write(privacyKey, '$hidden');
+
+  @override
+  Future<Result<bool>> getBackgroundUpdate() =>
+      _read(backgroundKey, (raw) => raw != 'false');
+
+  @override
+  Future<Result<void>> setBackgroundUpdate({required bool enabled}) =>
+      _write(backgroundKey, '$enabled');
 
   Future<Result<T>> _read<T>(String key, T Function(String? raw) parse) async {
     try {

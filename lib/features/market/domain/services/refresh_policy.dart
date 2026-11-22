@@ -117,6 +117,22 @@ abstract final class RefreshPolicy {
     return x.year == y.year && x.month == y.month && x.day == y.day;
   }
 
+  /// Newest `fetchedAt` per category (each category is fetched as a
+  /// whole). Callers override stocks with the whole-market snapshot time.
+  static Map<QuoteCategory, DateTime?> lastSuccessByCategory(
+    List<Quote> quotes,
+  ) {
+    final result = <QuoteCategory, DateTime?>{};
+    for (final q in quotes) {
+      final category = QuoteCategory.of(q.instrument.type);
+      final current = result[category];
+      if (current == null || q.fetchedAt.isAfter(current)) {
+        result[category] = q.fetchedAt;
+      }
+    }
+    return result;
+  }
+
   /// Exponential backoff after HTTP 429: 1, 2, 4, 8, 16, 30, 30 … minutes.
   /// A server-provided `Retry-After` wins if it is longer.
   static Duration backoff(int consecutiveFailures, {Duration? retryAfter}) {

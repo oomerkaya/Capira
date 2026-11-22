@@ -5,6 +5,7 @@ import 'package:capira/core/theme/app_colors.dart';
 import 'package:capira/core/theme/app_tokens.dart';
 import 'package:capira/core/utils/formatters.dart';
 import 'package:capira/core/widgets/app_card.dart';
+import 'package:capira/features/background/presentation/background_update.dart';
 import 'package:capira/features/market/market_providers.dart';
 import 'package:capira/features/market/presentation/price_refresh_controller.dart';
 import 'package:capira/features/settings/presentation/widgets/api_key_sheet.dart';
@@ -129,6 +130,17 @@ class _DataSourceSectionState extends ConsumerState<DataSourceSection> {
               ),
             ),
           ],
+          const Divider(indent: AppSpacing.lg, endIndent: AppSpacing.lg),
+          SwitchListTile(
+            title: Text(l10n.settingsBackgroundTitle),
+            subtitle: Text(l10n.settingsBackgroundSubtitle),
+            value: ref.watch(backgroundUpdateProvider),
+            onChanged: (v) => unawaited(
+              ref
+                  .read(backgroundUpdateProvider.notifier)
+                  .setEnabled(enabled: v),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.lg,
