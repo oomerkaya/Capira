@@ -4,16 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Single app-wide database. Tests override this with an in-memory DB.
 ///
-/// Shared across isolates: when the background update runs while the app
-/// is open, both use one database server (no lock conflicts, and the app's
-/// screens see the new rows at once).
+/// The background update (its own Flutter engine) opens its own connection
+/// to the same file; WAL mode and a busy timeout (`AppDatabase.beforeOpen`)
+/// make that safe. drift's isolate sharing is not used: it does not work
+/// across engines, and a server owned by the short-lived background engine
+/// would die with it.
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  final db = AppDatabase(
-    driftDatabase(
-      name: 'capira',
-      native: const DriftNativeOptions(shareAcrossIsolates: true),
-    ),
-  );
+  final db = AppDatabase(driftDatabase(name: 'capira'));
   ref.onDispose(db.close);
   return db;
 });

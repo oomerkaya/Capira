@@ -19,6 +19,7 @@ import 'package:capira/features/market/presentation/widgets/quote_tile.dart';
 import 'package:capira/features/portfolio/portfolio_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 
 const String _settingsPath = '/settings';
@@ -37,17 +38,13 @@ class MarketCategoryTab extends ConsumerWidget {
     if (quotesAsync.hasError && !quotesAsync.hasValue) {
       return const Center(child: ErrorState());
     }
-    final allQuotes = quotesAsync.value ?? const <Quote>[];
     final heldInstruments = ref.watch(heldInstrumentsProvider);
     final refresh = ref.watch(priceRefreshControllerProvider);
     final hasKey = ref.watch(burkutKeyProvider).value != null;
     final calendar =
         ref.watch(marketCalendarProvider).value ?? MarketCalendar.empty;
 
-    final quotes = _sorted([
-      for (final q in allQuotes)
-        if (QuoteCategory.of(q.instrument.type) == category) q,
-    ]);
+    final quotes = ref.watch(categoryQuotesProvider(category));
     final mine = [
       for (final q in quotes)
         if (heldInstruments.contains(q.instrument)) q,
@@ -154,18 +151,6 @@ class MarketCategoryTab extends ConsumerWidget {
     }
     messenger.showMessage(message);
   }
-
-  static List<Quote> _sorted(List<Quote> quotes) => quotes
-    ..sort((a, b) {
-      final byOrder = instrumentOrder(
-        a.instrument,
-      ).compareTo(instrumentOrder(b.instrument));
-      if (byOrder != 0) return byOrder;
-      final byType = a.instrument.type.index.compareTo(b.instrument.type.index);
-      return byType != 0
-          ? byType
-          : a.instrument.code.compareTo(b.instrument.code);
-    });
 
   Widget? _notice(
     AppLocalizations l10n,
@@ -508,3 +493,25 @@ class _SearchableAllSectionState extends State<_SearchableAllSection> {
     );
   }
 }
+
+/// One category's quotes in display order. Recomputed only when the cached
+/// quotes change, not on every rebuild of the tab (thousands of funds).
+final ProviderFamily<List<Quote>, QuoteCategory> categoryQuotesProvider =
+    Provider.family<List<Quote>, QuoteCategory>((ref, category) {
+      final all = ref.watch(quotesProvider).value ?? const <Quote>[];
+      return [
+        for (final q in all)
+          if (QuoteCategory.of(q.instrument.type) == category) q,
+      ]..sort((a, b) {
+        final byOrder = instrumentOrder(
+          a.instrument,
+        ).compareTo(instrumentOrder(b.instrument));
+        if (byOrder != 0) return byOrder;
+        final byType = a.instrument.type.index.compareTo(
+          b.instrument.type.index,
+        );
+        return byType != 0
+            ? byType
+            : a.instrument.code.compareTo(b.instrument.code);
+      });
+    });

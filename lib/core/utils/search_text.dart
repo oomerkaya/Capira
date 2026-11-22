@@ -3,7 +3,7 @@
 /// names both with and without Turkish letters).
 library;
 
-const Map<String, String> _fold = {
+const Map<String, String> _letters = {
   'ç': 'c',
   'ğ': 'g',
   'ı': 'i',
@@ -15,15 +15,27 @@ const Map<String, String> _fold = {
   'û': 'u',
 };
 
+/// Folded names, so typing in a list of thousands of funds does not fold
+/// every name again on each key press. Cleared when it grows too big.
+final Map<String, String> _cache = {};
+const int _cacheLimit = 20000;
+
 /// Lower case, Turkish letters folded to ASCII, punctuation as spaces,
 /// spaces collapsed.
 String foldForSearch(String text) {
+  final cached = _cache[text];
+  if (cached != null) return cached;
+  if (_cache.length >= _cacheLimit) _cache.clear();
+  return _cache[text] = _fold(text);
+}
+
+String _fold(String text) {
   // Turkish upper case first: İ → i, I → ı (then folded to i as well).
   final lower = text.replaceAll('İ', 'i').replaceAll('I', 'ı').toLowerCase();
   final buffer = StringBuffer();
   for (final rune in lower.runes) {
     final char = String.fromCharCode(rune);
-    buffer.write(_fold[char] ?? char);
+    buffer.write(_letters[char] ?? char);
   }
   return buffer
       .toString()

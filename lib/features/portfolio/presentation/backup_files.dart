@@ -43,11 +43,19 @@ class PlatformBackupFiles implements BackupFiles {
     );
   }
 
+  /// A backup of even thousands of transactions is far below this; a
+  /// larger file is not one of ours and is not read into memory.
+  static const int maxBytes = 5 * 1024 * 1024;
+
   @override
   Future<String?> pick() async {
     // Any type: some file managers report JSON as a generic binary file.
     final file = await FilePicker.pickFile();
     if (file == null) return null;
+    final length = await file.length();
+    if (length == null || length > maxBytes) {
+      throw const FormatException('not a backup: too large');
+    }
     return utf8.decode(await file.readAsBytes());
   }
 }

@@ -56,6 +56,11 @@ class AppDatabase extends _$AppDatabase {
     ),
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
+      // The app and the background update may open the file at the same
+      // time: WAL lets readers and a writer work together, and a writer
+      // waits up to 5 s for the other instead of failing.
+      await customSelect('PRAGMA journal_mode = WAL').get();
+      await customStatement('PRAGMA busy_timeout = 5000');
     },
   );
 }

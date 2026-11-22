@@ -150,8 +150,13 @@ final heldStockSymbolsProvider = Provider<Set<String>>(
 /// Stored KAP disclosures of held stocks (last 30 days), newest first,
 /// live. Read from storage only; never sends a request.
 final heldDisclosuresProvider = StreamProvider<List<KapDisclosure>>((ref) {
-  final held = ref.watch(heldStockSymbolsProvider);
-  if (held.isEmpty) return Stream.value(const []);
+  // Re-query only when the set of held stocks changes, not on every
+  // holdings update (a new but equal Set would restart the query).
+  final key = ref.watch(
+    heldStockSymbolsProvider.select((s) => (s.toList()..sort()).join(',')),
+  );
+  if (key.isEmpty) return Stream.value(const []);
+  final held = key.split(',').toSet();
   return ref
       .watch(disclosureRepositoryProvider)
       .watchForSymbols(held)
