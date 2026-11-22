@@ -5,8 +5,7 @@ import 'package:capira/features/market/domain/entities/quote.dart';
 
 /// When each price category may be fetched. Pure and fully testable.
 ///
-/// Rules (CLAUDE.md, docs/faz-3-piyasa-verisi.md "Kategori bazlı
-/// yenileme"):
+/// Rules:
 /// - Every category is fetched at most every [interval] (60 min) after its
 ///   last successful update. Manual refresh (pull-to-refresh) follows the
 ///   same rule; it never forces a request.

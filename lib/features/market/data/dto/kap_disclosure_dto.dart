@@ -1,7 +1,6 @@
 import 'package:capira/features/market/data/dto/json_parsing.dart';
 
-/// One item from `/kap`. Verified against the live API on 2026-11-19
-/// (`test/fixtures/burkut/kap_feed.json`):
+/// One item from `/kap`. Verified against the live API on 2026-11-19:
 /// - Envelope: `{"data": {"content": [...], "totalElements", "last", ...}}`.
 /// - Item: `id`, `symbol`, `title`, `summary` (often empty),
 ///   `short_description` (contains the link to the original disclosure:

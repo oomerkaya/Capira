@@ -10,7 +10,7 @@ Döviz, altın, gümüş, BIST hisseleri ve TEFAS fonlarını tek ekranda takip 
 
 | Portföy | Piyasa | Hisse detayı |
 |---|---|---|
-| ![Portföy](docs/images/readme-light-portfolio.png) | ![Piyasa](docs/images/readme-dark-market.png) | ![Hisse detayı](docs/images/readme-light-detail.png) |
+| ![Portföy](screenshots/portfolio-light.png) | ![Piyasa](screenshots/market-dark.png) | ![Hisse detayı](screenshots/detail-light.png) |
 
 ## Özellikler
 
@@ -61,16 +61,11 @@ Capira kotayı korumak için uygulama açıkken aşağıdaki aralıklarla istek 
 
 Normal kullanımda ayda yaklaşık 250-700 istek harcanır. İnternet yoksa ya da kota dolduysa son bilinen fiyatlar gösterilir.
 
-## Geliştirme
+## Teknik
 
-```bash
-flutter analyze
-flutter test
-```
-
-- Mimari: feature-first, katmanlı (data / domain / presentation); Riverpod, Drift (SQLite), go_router, dio. Para ve miktar hesapları `Decimal` ile yapılır.
-- Proje kuralları: [`CLAUDE.md`](CLAUDE.md). Yol haritası: [`ROADMAP.md`](ROADMAP.md). Her fazın kararları ve ayrıntıları: [`docs/`](docs/README.md).
-- API anahtarları asla koda, loglara, testlere veya git geçmişine girmez. Testler sahte anahtar ve kaydedilmiş örnek cevaplar (`test/fixtures/`) kullanır.
+- Flutter (Android), feature-first katmanlı mimari (data / domain / presentation).
+- Riverpod, Drift (SQLite), go_router, dio, WorkManager. Para ve miktar hesapları `Decimal` ile yapılır.
+- API anahtarı yalnızca cihazın şifreli deposunda tutulur; kodda, loglarda ya da yedek dosyasında yer almaz.
 
 ## Lisans
 

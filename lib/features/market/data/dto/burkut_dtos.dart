@@ -5,14 +5,14 @@ import 'package:decimal/decimal.dart';
 ///
 /// Field names differ between endpoints and between Bürküt's own docs, so
 /// every field is read leniently. Verified against the live API on
-/// 2026-11-18 (fixtures in `test/fixtures/burkut/`):
+/// 2026-11-18:
 /// - `/forex`: `buyRate`, `sellRate`, `rate`, `currentPrice`,
 ///   `dailyChangePct`, `updatedAt` (no `buying`/`price`!)
 /// - `/gold`: `buying`, `selling`, `price`, `currentPrice`, `dailyChangePct`,
 ///   `unit`, `updatedAt`
 /// - `/stocks`: `price`, `currentPrice`, `changePercent`, `updatedAt`
 /// Older names from the SDK (`last_price`, `change_rate`, `time`) are kept
-/// as fallbacks. See docs/faz-3-piyasa-verisi.md.
+/// as fallbacks.
 class BurkutPriceDto {
   const BurkutPriceDto({
     required this.symbol,

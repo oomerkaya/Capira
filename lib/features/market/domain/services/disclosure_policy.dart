@@ -3,8 +3,7 @@ import 'package:capira/features/market/domain/services/refresh_policy.dart';
 
 /// When KAP disclosures are fetched. Pure and fully testable.
 ///
-/// Rules (decided with the user on 2026-11-19, docs/faz-4-ozellikler.md
-/// section 11):
+/// Rules:
 /// - **One request a day:** the general feed (all companies, the latest
 ///   500 disclosures, about 29 hours) once per Istanbul day, from 08:00,
 ///   while the app is open. Never a request per stock, never older pages:

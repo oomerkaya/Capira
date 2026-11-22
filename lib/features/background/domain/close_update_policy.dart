@@ -4,7 +4,7 @@ import 'package:capira/features/market/domain/services/refresh_policy.dart';
 
 /// When the daily background update fetches what. Pure and testable.
 ///
-/// Rules (decided with the user on 2026-11-22, docs/faz-7):
+/// Rules:
 /// - Once per day, after the **close**: 18:20 Istanbul (BIST closes at
 ///   18:00, its data is at least 15 minutes delayed).
 /// - The task wakes up every few hours; each run only fetches the
