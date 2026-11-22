@@ -17,6 +17,7 @@ Döviz, altın, gümüş, BIST hisseleri ve TEFAS fonlarını tek ekranda takip 
 - **Portföy:** alım/satım işlemleri, ağırlıklı ortalama maliyet, toplam değer, kâr/zarar, günlük değişim, tür veya varlık bazında dağılım.
 - **Piyasa:** döviz, altın/gümüş (gram, çeyrek, yarım, tam, cumhuriyet, ata, gram gümüş), BIST'teki tüm hisseler ve TEFAS fonları; arama ile.
 - **KAP bildirimleri:** portföydeki hisselerin son 30 günlük bildirimleri, KAP'taki asıl metne bağlantıyla. Yorum ya da "olumlu/olumsuz" etiketi yoktur.
+- **Değer geçmişi, özet ve hedefler:** portföyün günlük değeri telefonda kaydedilir; haftalık/aylık özet, birikim hedefleri, ₺/$/€ gösterimi ve gizlilik modu.
 - **Yedekleme:** portföyü tek bir dosyaya aktar, başka telefonda geri yükle.
 - **Gizlilik:** sunucu yok. Tüm veriler telefondaki yerel veritabanında; API anahtarı şifreli depoda (Android Keystore) tutulur ve yedeğe girmez.
 - Aydınlık / karanlık tema, Türkçe arayüz, büyük yazı boyutu desteği.
@@ -47,7 +48,7 @@ Anahtar olmadan fiyat ve KAP bildirimi gelmez; portföyü yine de girebilirsin.
 
 ## Veri ve güncelleme
 
-Capira kotayı korumak için yalnızca uygulama açıkken ve aşağıdaki aralıklarla istek gönderir; ekranı aşağı çekmek bu aralıkları kısaltmaz.
+Capira kotayı korumak için uygulama açıkken aşağıdaki aralıklarla istek gönderir; ekranı aşağı çekmek bu aralıkları kısaltmaz. Ayrıca günde bir kez, borsa kapanışından sonra arka planda güncellenir (Ayarlar'dan kapatılabilir).
 
 | Veri | Ne zaman | İstek |
 |---|---|---|
@@ -55,6 +56,7 @@ Capira kotayı korumak için yalnızca uygulama açıkken ve aşağıdaki aralı
 | BIST hisseleri | Hafta içi 10:00-18:00, saatte bir (tatilde yok) | Tüm piyasa için 1 |
 | TEFAS fonları | Hafta içi, günde bir | 1 |
 | KAP bildirimleri | Günde bir, 08:00'den sonra | 1 |
+| Arka plan (kapanış sonrası) | Günde bir, 18:20'den sonra; uygulama zaten güncellediyse istek yok | En fazla 5 |
 | Kota durumu | Ayarlar açılınca | Kota harcamaz |
 
 Normal kullanımda ayda yaklaşık 250-700 istek harcanır. İnternet yoksa ya da kota dolduysa son bilinen fiyatlar gösterilir.
