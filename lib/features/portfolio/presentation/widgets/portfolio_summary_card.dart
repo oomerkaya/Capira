@@ -7,6 +7,7 @@ import 'package:capira/core/widgets/app_card.dart';
 import 'package:capira/core/widgets/change_chip.dart';
 import 'package:capira/core/widgets/money_text.dart';
 import 'package:capira/features/portfolio/domain/entities/portfolio_summary.dart';
+import 'package:capira/features/portfolio/presentation/currency_pnl.dart';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 
@@ -37,6 +38,11 @@ class PortfolioSummaryCard extends StatelessWidget {
     final daily = summary.dailyChange;
     final format = AmountDisplay.of(context);
     final onChanged = onCurrencyChanged;
+    final realPnl = CurrencyPnl.of(
+      format: format,
+      valueTry: summary.valueWithKnownCost,
+      costInCurrency: summary.totalCostIn(format.currency),
+    );
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -69,11 +75,18 @@ class PortfolioSummaryCard extends StatelessWidget {
               runSpacing: AppSpacing.md,
               children: [
                 if (pnl != null)
-                  _Metric(
-                    label: l10n.portfolioPnl,
-                    amount: pnl,
-                    percent: summary.unrealizedPnlPercent,
-                  ),
+                  if (realPnl != null)
+                    _Metric.text(
+                      label: l10n.portfolioPnlIn(format.currency.symbol),
+                      chip: realPnl.label(format),
+                      direction: directionOf(realPnl.amount),
+                    )
+                  else
+                    _Metric(
+                      label: l10n.portfolioPnl,
+                      amount: pnl,
+                      percent: summary.unrealizedPnlPercent,
+                    ),
                 if (daily != null)
                   _Metric(
                     label: l10n.portfolioToday,
@@ -101,6 +114,14 @@ class PortfolioSummaryCard extends StatelessWidget {
                 style: text.bodySmall,
               ),
             ),
+          if (format.converts && pnl != null && realPnl == null)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: Text(
+                l10n.portfolioPnlRateNote(format.currency.symbol),
+                style: text.bodySmall,
+              ),
+            ),
         ],
       ),
     );
@@ -108,25 +129,44 @@ class PortfolioSummaryCard extends StatelessWidget {
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({required this.label, required this.amount, this.percent});
+  const _Metric({
+    required this.label,
+    required Decimal this.amount,
+    this.percent,
+  }) : chip = null,
+       direction = null;
+
+  /// Already formatted (e.g. a real dollar P/L).
+  const _Metric.text({
+    required this.label,
+    required String this.chip,
+    required ChangeDirection this.direction,
+  }) : amount = null,
+       percent = null;
 
   final String label;
-  final Decimal amount;
+  final Decimal? amount;
   final Decimal? percent;
+  final String? chip;
+  final ChangeDirection? direction;
 
   @override
   Widget build(BuildContext context) {
     final p = percent;
-    final money = AmountDisplay.of(context).signedMoney(amount);
-    final chipLabel = p == null
-        ? money
-        : '$money (${Formatters.percent(p, signed: true)})';
+    final a = amount ?? Decimal.zero;
+    final money = AmountDisplay.of(context).signedMoney(a);
+    final chipLabel =
+        chip ??
+        (p == null ? money : '$money (${Formatters.percent(p, signed: true)})');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: Theme.of(context).textTheme.labelMedium),
         const SizedBox(height: AppSpacing.xs),
-        ChangeChip(label: chipLabel, direction: directionOf(amount)),
+        ChangeChip(
+          label: chipLabel,
+          direction: direction ?? directionOf(a),
+        ),
       ],
     );
   }

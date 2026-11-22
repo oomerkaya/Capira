@@ -441,6 +441,24 @@ class $AssetTransactionsTable extends AssetTransactions
     defaultValue: currentDateAndTime,
   );
   @override
+  late final GeneratedColumnWithTypeConverter<Decimal?, String> usdTry =
+      GeneratedColumn<String>(
+        'usd_try',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<Decimal?>($AssetTransactionsTable.$converterusdTryn);
+  @override
+  late final GeneratedColumnWithTypeConverter<Decimal?, String> eurTry =
+      GeneratedColumn<String>(
+        'eur_try',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<Decimal?>($AssetTransactionsTable.$convertereurTryn);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     assetId,
@@ -450,6 +468,8 @@ class $AssetTransactionsTable extends AssetTransactions
     date,
     note,
     createdAt,
+    usdTry,
+    eurTry,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -547,6 +567,18 @@ class $AssetTransactionsTable extends AssetTransactions
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      usdTry: $AssetTransactionsTable.$converterusdTryn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}usd_try'],
+        ),
+      ),
+      eurTry: $AssetTransactionsTable.$convertereurTryn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}eur_try'],
+        ),
+      ),
     );
   }
 
@@ -561,6 +593,14 @@ class $AssetTransactionsTable extends AssetTransactions
       const DecimalConverter();
   static TypeConverter<Decimal?, String?> $converterunitPriceTryn =
       NullAwareTypeConverter.wrap($converterunitPriceTry);
+  static TypeConverter<Decimal, String> $converterusdTry =
+      const DecimalConverter();
+  static TypeConverter<Decimal?, String?> $converterusdTryn =
+      NullAwareTypeConverter.wrap($converterusdTry);
+  static TypeConverter<Decimal, String> $convertereurTry =
+      const DecimalConverter();
+  static TypeConverter<Decimal?, String?> $convertereurTryn =
+      NullAwareTypeConverter.wrap($convertereurTry);
 }
 
 class TransactionRow extends DataClass implements Insertable<TransactionRow> {
@@ -576,6 +616,12 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
   final DateTime date;
   final String? note;
   final DateTime createdAt;
+
+  /// TRY per USD / EUR when the transaction was entered on its own day
+  /// (v5); `null` for older or back-dated transactions. Gives the real
+  /// dollar / euro cost.
+  final Decimal? usdTry;
+  final Decimal? eurTry;
   const TransactionRow({
     required this.id,
     required this.assetId,
@@ -585,6 +631,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     required this.date,
     this.note,
     required this.createdAt,
+    this.usdTry,
+    this.eurTry,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -607,6 +655,16 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       map['note'] = Variable<String>(note);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || usdTry != null) {
+      map['usd_try'] = Variable<String>(
+        $AssetTransactionsTable.$converterusdTryn.toSql(usdTry),
+      );
+    }
+    if (!nullToAbsent || eurTry != null) {
+      map['eur_try'] = Variable<String>(
+        $AssetTransactionsTable.$convertereurTryn.toSql(eurTry),
+      );
+    }
     return map;
   }
 
@@ -622,6 +680,12 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       date: Value(date),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       createdAt: Value(createdAt),
+      usdTry: usdTry == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usdTry),
+      eurTry: eurTry == null && nullToAbsent
+          ? const Value.absent()
+          : Value(eurTry),
     );
   }
 
@@ -639,6 +703,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       date: serializer.fromJson<DateTime>(json['date']),
       note: serializer.fromJson<String?>(json['note']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      usdTry: serializer.fromJson<Decimal?>(json['usdTry']),
+      eurTry: serializer.fromJson<Decimal?>(json['eurTry']),
     );
   }
   @override
@@ -653,6 +719,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       'date': serializer.toJson<DateTime>(date),
       'note': serializer.toJson<String?>(note),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'usdTry': serializer.toJson<Decimal?>(usdTry),
+      'eurTry': serializer.toJson<Decimal?>(eurTry),
     };
   }
 
@@ -665,6 +733,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     DateTime? date,
     Value<String?> note = const Value.absent(),
     DateTime? createdAt,
+    Value<Decimal?> usdTry = const Value.absent(),
+    Value<Decimal?> eurTry = const Value.absent(),
   }) => TransactionRow(
     id: id ?? this.id,
     assetId: assetId ?? this.assetId,
@@ -674,6 +744,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     date: date ?? this.date,
     note: note.present ? note.value : this.note,
     createdAt: createdAt ?? this.createdAt,
+    usdTry: usdTry.present ? usdTry.value : this.usdTry,
+    eurTry: eurTry.present ? eurTry.value : this.eurTry,
   );
   TransactionRow copyWithCompanion(AssetTransactionsCompanion data) {
     return TransactionRow(
@@ -687,6 +759,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
       date: data.date.present ? data.date.value : this.date,
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      usdTry: data.usdTry.present ? data.usdTry.value : this.usdTry,
+      eurTry: data.eurTry.present ? data.eurTry.value : this.eurTry,
     );
   }
 
@@ -700,7 +774,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           ..write('unitPriceTry: $unitPriceTry, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('usdTry: $usdTry, ')
+          ..write('eurTry: $eurTry')
           ..write(')'))
         .toString();
   }
@@ -715,6 +791,8 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
     date,
     note,
     createdAt,
+    usdTry,
+    eurTry,
   );
   @override
   bool operator ==(Object other) =>
@@ -727,7 +805,9 @@ class TransactionRow extends DataClass implements Insertable<TransactionRow> {
           other.unitPriceTry == this.unitPriceTry &&
           other.date == this.date &&
           other.note == this.note &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.usdTry == this.usdTry &&
+          other.eurTry == this.eurTry);
 }
 
 class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
@@ -739,6 +819,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
   final Value<DateTime> date;
   final Value<String?> note;
   final Value<DateTime> createdAt;
+  final Value<Decimal?> usdTry;
+  final Value<Decimal?> eurTry;
   const AssetTransactionsCompanion({
     this.id = const Value.absent(),
     this.assetId = const Value.absent(),
@@ -748,6 +830,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
     this.date = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.usdTry = const Value.absent(),
+    this.eurTry = const Value.absent(),
   });
   AssetTransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -758,6 +842,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
     required DateTime date,
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.usdTry = const Value.absent(),
+    this.eurTry = const Value.absent(),
   }) : assetId = Value(assetId),
        kind = Value(kind),
        quantity = Value(quantity),
@@ -771,6 +857,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Expression<DateTime>? date,
     Expression<String>? note,
     Expression<DateTime>? createdAt,
+    Expression<String>? usdTry,
+    Expression<String>? eurTry,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -781,6 +869,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
       if (date != null) 'date': date,
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
+      if (usdTry != null) 'usd_try': usdTry,
+      if (eurTry != null) 'eur_try': eurTry,
     });
   }
 
@@ -793,6 +883,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
     Value<DateTime>? date,
     Value<String?>? note,
     Value<DateTime>? createdAt,
+    Value<Decimal?>? usdTry,
+    Value<Decimal?>? eurTry,
   }) {
     return AssetTransactionsCompanion(
       id: id ?? this.id,
@@ -803,6 +895,8 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
       date: date ?? this.date,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
+      usdTry: usdTry ?? this.usdTry,
+      eurTry: eurTry ?? this.eurTry,
     );
   }
 
@@ -839,6 +933,16 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (usdTry.present) {
+      map['usd_try'] = Variable<String>(
+        $AssetTransactionsTable.$converterusdTryn.toSql(usdTry.value),
+      );
+    }
+    if (eurTry.present) {
+      map['eur_try'] = Variable<String>(
+        $AssetTransactionsTable.$convertereurTryn.toSql(eurTry.value),
+      );
+    }
     return map;
   }
 
@@ -852,7 +956,9 @@ class AssetTransactionsCompanion extends UpdateCompanion<TransactionRow> {
           ..write('unitPriceTry: $unitPriceTry, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('usdTry: $usdTry, ')
+          ..write('eurTry: $eurTry')
           ..write(')'))
         .toString();
   }
@@ -3639,6 +3745,8 @@ typedef $$AssetTransactionsTableCreateCompanionBuilder =
       required DateTime date,
       Value<String?> note,
       Value<DateTime> createdAt,
+      Value<Decimal?> usdTry,
+      Value<Decimal?> eurTry,
     });
 typedef $$AssetTransactionsTableUpdateCompanionBuilder =
     AssetTransactionsCompanion Function({
@@ -3650,6 +3758,8 @@ typedef $$AssetTransactionsTableUpdateCompanionBuilder =
       Value<DateTime> date,
       Value<String?> note,
       Value<DateTime> createdAt,
+      Value<Decimal?> usdTry,
+      Value<Decimal?> eurTry,
     });
 
 final class $$AssetTransactionsTableReferences
@@ -3725,6 +3835,18 @@ class $$AssetTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<Decimal?, Decimal, String> get usdTry =>
+      $composableBuilder(
+        column: $table.usdTry,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnWithTypeConverterFilters<Decimal?, Decimal, String> get eurTry =>
+      $composableBuilder(
+        column: $table.eurTry,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
   $$AssetsTableFilterComposer get assetId {
     final $$AssetsTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -3793,6 +3915,16 @@ class $$AssetTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get usdTry => $composableBuilder(
+    column: $table.usdTry,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get eurTry => $composableBuilder(
+    column: $table.eurTry,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AssetsTableOrderingComposer get assetId {
     final $$AssetsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3849,6 +3981,12 @@ class $$AssetTransactionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Decimal?, String> get usdTry =>
+      $composableBuilder(column: $table.usdTry, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Decimal?, String> get eurTry =>
+      $composableBuilder(column: $table.eurTry, builder: (column) => column);
 
   $$AssetsTableAnnotationComposer get assetId {
     final $$AssetsTableAnnotationComposer composer = $composerBuilder(
@@ -3915,6 +4053,8 @@ class $$AssetTransactionsTableTableManager
                 Value<DateTime> date = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<Decimal?> usdTry = const Value.absent(),
+                Value<Decimal?> eurTry = const Value.absent(),
               }) => AssetTransactionsCompanion(
                 id: id,
                 assetId: assetId,
@@ -3924,6 +4064,8 @@ class $$AssetTransactionsTableTableManager
                 date: date,
                 note: note,
                 createdAt: createdAt,
+                usdTry: usdTry,
+                eurTry: eurTry,
               ),
           createCompanionCallback:
               ({
@@ -3935,6 +4077,8 @@ class $$AssetTransactionsTableTableManager
                 required DateTime date,
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<Decimal?> usdTry = const Value.absent(),
+                Value<Decimal?> eurTry = const Value.absent(),
               }) => AssetTransactionsCompanion.insert(
                 id: id,
                 assetId: assetId,
@@ -3944,6 +4088,8 @@ class $$AssetTransactionsTableTableManager
                 date: date,
                 note: note,
                 createdAt: createdAt,
+                usdTry: usdTry,
+                eurTry: eurTry,
               ),
           withReferenceMapper: (p0) => p0
               .map(

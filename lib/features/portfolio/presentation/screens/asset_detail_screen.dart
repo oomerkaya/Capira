@@ -22,6 +22,7 @@ import 'package:capira/features/portfolio/domain/entities/asset_type.dart';
 import 'package:capira/features/portfolio/domain/entities/holding.dart';
 import 'package:capira/features/portfolio/domain/entities/portfolio_summary.dart';
 import 'package:capira/features/portfolio/portfolio_providers.dart';
+import 'package:capira/features/portfolio/presentation/currency_pnl.dart';
 import 'package:capira/features/portfolio/presentation/portfolio_labels.dart';
 import 'package:capira/features/portfolio/presentation/widgets/kap_sections.dart';
 import 'package:capira/features/portfolio/presentation/widgets/portfolio_summary_card.dart';
@@ -196,6 +197,11 @@ class _PositionCard extends StatelessWidget {
     final avg = holding.averageCostTry;
     final realized = holding.realizedPnlTry;
     final format = AmountDisplay.of(context);
+    final realPnl = CurrencyPnl.of(
+      format: format,
+      valueTry: value,
+      costInCurrency: holding.totalCostIn(format.currency),
+    );
     final quote = valued?.quote;
     final change = quote?.changePercent;
 
@@ -234,11 +240,13 @@ class _PositionCard extends StatelessWidget {
           if (pnl != null) ...[
             const SizedBox(height: AppSpacing.sm),
             ChangeChip(
-              label: pnlPct == null
-                  ? format.signedMoney(pnl)
-                  : '${format.signedMoney(pnl)} '
-                        '(${Formatters.percent(pnlPct, signed: true)})',
-              direction: directionOf(pnl),
+              label:
+                  realPnl?.label(format) ??
+                  (pnlPct == null
+                      ? format.signedMoney(pnl)
+                      : '${format.signedMoney(pnl)} '
+                            '(${Formatters.percent(pnlPct, signed: true)})'),
+              direction: directionOf(realPnl?.amount ?? pnl),
             ),
           ],
           const SizedBox(height: AppSpacing.lg),

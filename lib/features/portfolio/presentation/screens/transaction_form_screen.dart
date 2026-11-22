@@ -16,9 +16,11 @@ import 'package:capira/features/market/presentation/instrument_labels.dart';
 import 'package:capira/features/portfolio/domain/entities/asset.dart';
 import 'package:capira/features/portfolio/domain/entities/asset_transaction.dart';
 import 'package:capira/features/portfolio/domain/entities/asset_type.dart';
+import 'package:capira/features/portfolio/domain/services/snapshot_builder.dart';
 import 'package:capira/features/portfolio/portfolio_providers.dart';
 import 'package:capira/features/portfolio/presentation/portfolio_labels.dart';
 import 'package:capira/features/portfolio/presentation/widgets/instrument_picker_sheet.dart';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -165,6 +167,21 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     _maybePrefillPrice();
   }
 
+  /// Today's USD / EUR rate for a transaction dated today; none for a
+  /// back-dated one (that day's rate is unknown).
+  ({Decimal? usd, Decimal? eur}) _ratesFor(DateTime date) {
+    if (!_sameDay(date, DateTime.now())) return (usd: null, eur: null);
+    final quotes = ref.read(quotesProvider).value ?? const <Quote>[];
+    Decimal? rate(String code) => quotes
+        .where((q) => q.instrument == (type: AssetType.currency, code: code))
+        .firstOrNull
+        ?.priceTry;
+    return (usd: rate('USD'), eur: rate('EUR'));
+  }
+
+  static bool _sameDay(DateTime a, DateTime b) =>
+      SnapshotBuilder.dayKey(a) == SnapshotBuilder.dayKey(b);
+
   Future<void> _save() async {
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
@@ -185,6 +202,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
 
     setState(() => _busy = true);
     final note = _note.text.trim().isEmpty ? null : _note.text.trim();
+    final rates = _ratesFor(_date);
     final Result<Object?> result;
     final tx = widget.transaction;
     if (tx != null) {
@@ -197,6 +215,9 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
               unitPriceTry: () => price,
               date: _date,
               note: () => note,
+              // Same day: keep the stored rates; moved: today's or none.
+              usdTry: _sameDay(_date, tx.date) ? null : () => rates.usd,
+              eurTry: _sameDay(_date, tx.date) ? null : () => rates.eur,
             ),
           );
     } else {
@@ -214,6 +235,8 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
               unitPriceTry: price,
               date: _date,
               note: note,
+              usdTry: rates.usd,
+              eurTry: rates.eur,
             ),
           );
     }

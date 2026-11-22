@@ -419,5 +419,21 @@
       }
     }
   },
-  "goalsDeleted": "Hedef silindi"
+  "goalsDeleted": "Hedef silindi",
+  "portfolioPnlIn": "Kâr/zarar ({symbol} bazında)",
+  "@portfolioPnlIn": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "portfolioPnlRateNote": "{symbol} bazında gerçek kâr/zarar, alım günü kuru kayıtlı alımlar için hesaplanır (bundan sonraki alımlar).",
+  "@portfolioPnlRateNote": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  }
 }

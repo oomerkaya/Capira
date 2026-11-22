@@ -53,6 +53,8 @@ abstract final class BackupCodec {
                     'unitPriceTry': tx.unitPriceTry?.toString(),
                     'date': tx.date.toUtc().toIso8601String(),
                     'note': tx.note,
+                    if (tx.usdTry != null) 'usdTry': tx.usdTry.toString(),
+                    if (tx.eurTry != null) 'eurTry': tx.eurTry.toString(),
                   },
               ],
             },
@@ -104,12 +106,16 @@ abstract final class BackupCodec {
 
   static TransactionDraft _transaction(Map<String, dynamic> json) {
     final price = json['unitPriceTry'] as String?;
+    final usd = json['usdTry'] as String?;
+    final eur = json['eurTry'] as String?;
     return TransactionDraft(
       kind: TransactionKind.values.byName(json['kind'] as String),
       quantity: Decimal.parse(json['quantity'] as String),
       unitPriceTry: price == null ? null : Decimal.parse(price),
       date: DateTime.parse(json['date'] as String),
       note: json['note'] as String?,
+      usdTry: usd == null ? null : Decimal.parse(usd),
+      eurTry: eur == null ? null : Decimal.parse(eur),
     );
   }
 }

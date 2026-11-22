@@ -38,6 +38,12 @@ class AssetTransactions extends Table {
   DateTimeColumn get date => dateTime()();
   TextColumn get note => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  /// TRY per USD / EUR when the transaction was entered on its own day
+  /// (v5); `null` for older or back-dated transactions. Gives the real
+  /// dollar / euro cost.
+  TextColumn get usdTry => text().map(const DecimalConverter()).nullable()();
+  TextColumn get eurTry => text().map(const DecimalConverter()).nullable()();
 }
 
 /// Last known price per instrument. Survives restarts so the app works

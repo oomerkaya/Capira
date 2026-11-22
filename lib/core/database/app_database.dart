@@ -24,7 +24,7 @@ class AppDatabase extends _$AppDatabase {
   /// Bump on every schema change, then run
   /// `dart run drift_dev make-migrations` and add a step in [migration].
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -42,6 +42,16 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(schema.portfolioSnapshots);
         await m.createTable(schema.assetSnapshots);
         await m.createTable(schema.goals);
+      },
+      from4To5: (m, schema) async {
+        await m.addColumn(
+          schema.assetTransactions,
+          schema.assetTransactions.usdTry,
+        );
+        await m.addColumn(
+          schema.assetTransactions,
+          schema.assetTransactions.eurTry,
+        );
       },
     ),
     beforeOpen: (details) async {

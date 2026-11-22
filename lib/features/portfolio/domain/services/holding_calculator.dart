@@ -51,6 +51,7 @@ abstract final class HoldingCalculator {
     }
 
     final hasQuantity = quantity > Decimal.zero;
+    final sorted = sortChronologically(transactions);
     return Holding(
       asset: asset,
       quantity: quantity,
@@ -58,7 +59,44 @@ abstract final class HoldingCalculator {
       totalCostTry: costKnown ? cost : null,
       averageCostTry: costKnown && hasQuantity ? _divide(cost, quantity) : null,
       realizedPnlTry: realizedKnown ? realized : null,
+      totalCostUsd: costKnown ? _costIn(sorted, (t) => t.usdTry) : null,
+      totalCostEur: costKnown ? _costIn(sorted, (t) => t.eurTry) : null,
     );
+  }
+
+  /// Weighted-average cost of the remaining quantity in another currency,
+  /// each buy converted at its own [rateOf]; `null` when a priced buy that
+  /// still counts has no rate. Same method as the TRY cost.
+  static Decimal? _costIn(
+    List<AssetTransaction> sorted,
+    Decimal? Function(AssetTransaction) rateOf,
+  ) {
+    var quantity = Decimal.zero;
+    var cost = Decimal.zero;
+    var known = true;
+    for (final tx in sorted) {
+      switch (tx.kind) {
+        case TransactionKind.buy:
+          quantity += tx.quantity;
+          final price = tx.unitPriceTry;
+          final rate = rateOf(tx);
+          if (price == null || rate == null || rate <= Decimal.zero) {
+            known = false;
+          } else {
+            cost += tx.quantity * _divide(price, rate);
+          }
+        case TransactionKind.sell:
+          if (quantity == Decimal.zero) continue;
+          final soldQty = tx.quantity > quantity ? quantity : tx.quantity;
+          cost -= _divide(cost, quantity) * soldQty;
+          quantity -= soldQty;
+      }
+      if (quantity == Decimal.zero) {
+        cost = Decimal.zero;
+        known = true;
+      }
+    }
+    return known ? cost : null;
   }
 
   /// True if, at any point in time, a sell exceeds the quantity held.

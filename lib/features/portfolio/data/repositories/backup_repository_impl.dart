@@ -36,6 +36,8 @@ class BackupRepositoryImpl implements BackupRepository {
                     unitPriceTry: tx.unitPriceTry,
                     date: tx.date,
                     note: tx.note,
+                    usdTry: tx.usdTry,
+                    eurTry: tx.eurTry,
                   ),
               ],
             ),

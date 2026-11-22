@@ -857,4 +857,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get goalsDeleted => 'Hedef silindi';
+
+  @override
+  String portfolioPnlIn(String symbol) {
+    return 'Kâr/zarar ($symbol bazında)';
+  }
+
+  @override
+  String portfolioPnlRateNote(String symbol) {
+    return '$symbol bazında gerçek kâr/zarar, alım günü kuru kayıtlı alımlar için hesaplanır (bundan sonraki alımlar).';
+  }
 }

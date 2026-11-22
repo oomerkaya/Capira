@@ -8,6 +8,7 @@ import 'package:capira/core/widgets/instrument_avatar.dart';
 import 'package:capira/core/widgets/trailing_figures.dart';
 import 'package:capira/features/market/presentation/instrument_labels.dart';
 import 'package:capira/features/portfolio/domain/entities/portfolio_summary.dart';
+import 'package:capira/features/portfolio/presentation/currency_pnl.dart';
 import 'package:capira/features/portfolio/presentation/portfolio_labels.dart';
 import 'package:capira/features/portfolio/presentation/widgets/portfolio_summary_card.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,14 @@ class HoldingTile extends StatelessWidget {
           : l10n.holdingQuantityAvg(quantity, Formatters.currencyTry(avg)),
     );
     final value = valued.marketValue;
+    final real = CurrencyPnl.of(
+      format: AmountDisplay.of(context),
+      valueTry: valued.marketValue,
+      costInCurrency: h.totalCostIn(AmountDisplay.of(context).currency),
+    );
     final pnl = valued.unrealizedPnl;
-    final pnlPct = valued.unrealizedPnlPercent;
+    // In $ / € mode the real result at each buy's rate, when known.
+    final pnlPct = real?.percent ?? valued.unrealizedPnlPercent;
     final company = companyName(asset, valued.quote);
 
     return InkWell(
@@ -124,7 +131,7 @@ class HoldingTile extends StatelessWidget {
                     label: pnlPct == null
                         ? format.signedMoney(pnl)
                         : Formatters.percent(pnlPct, signed: true),
-                    direction: directionOf(pnl),
+                    direction: directionOf(real?.amount ?? pnl),
                   ),
                 ],
               ],

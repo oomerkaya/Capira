@@ -1651,6 +1651,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Hedef silindi'**
   String get goalsDeleted;
+
+  /// No description provided for @portfolioPnlIn.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kâr/zarar ({symbol} bazında)'**
+  String portfolioPnlIn(String symbol);
+
+  /// No description provided for @portfolioPnlRateNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'{symbol} bazında gerçek kâr/zarar, alım günü kuru kayıtlı alımlar için hesaplanır (bundan sonraki alımlar).'**
+  String portfolioPnlRateNote(String symbol);
 }
 
 class _AppLocalizationsDelegate

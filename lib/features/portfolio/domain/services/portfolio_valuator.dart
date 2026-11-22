@@ -26,6 +26,8 @@ abstract final class PortfolioValuator {
     var costOfPriced = Decimal.zero;
     var valueWithKnownCost = Decimal.zero;
     var anyKnownCost = false;
+    Decimal? costUsd = Decimal.zero;
+    Decimal? costEur = Decimal.zero;
     var dailyChange = Decimal.zero;
     var anyDaily = false;
     var missing = 0;
@@ -53,6 +55,10 @@ abstract final class PortfolioValuator {
         pnl = value - cost;
         anyKnownCost = true;
         costOfPriced += cost;
+        final usd = h.totalCostUsd;
+        final eur = h.totalCostEur;
+        costUsd = costUsd == null || usd == null ? null : costUsd + usd;
+        costEur = costEur == null || eur == null ? null : costEur + eur;
         valueWithKnownCost += value;
         if (cost > Decimal.zero) pnlPercent = _percent(pnl, cost);
       }
@@ -108,6 +114,8 @@ abstract final class PortfolioValuator {
       dailyChangePercent: anyDaily && previousTotal > Decimal.zero
           ? _percent(dailyChange, previousTotal)
           : null,
+      totalCostUsd: anyKnownCost ? costUsd : null,
+      totalCostEur: anyKnownCost ? costEur : null,
     );
   }
 

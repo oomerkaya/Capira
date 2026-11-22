@@ -24,6 +24,8 @@ extension TransactionRowMapper on TransactionRow {
     unitPriceTry: unitPriceTry,
     date: date,
     note: note,
+    usdTry: usdTry,
+    eurTry: eurTry,
   );
 }
 
@@ -36,6 +38,8 @@ extension TransactionDraftMapper on TransactionDraft {
         unitPriceTry: Value(unitPriceTry),
         date: date,
         note: Value(note),
+        usdTry: Value(usdTry),
+        eurTry: Value(eurTry),
       );
 }
 
@@ -46,5 +50,7 @@ extension AssetTransactionMapper on AssetTransaction {
     unitPriceTry: Value(unitPriceTry),
     date: Value(date),
     note: Value(note),
+    usdTry: Value(usdTry),
+    eurTry: Value(eurTry),
   );
 }

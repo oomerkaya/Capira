@@ -1,3 +1,4 @@
+import 'package:capira/core/domain/display_currency.dart';
 import 'package:capira/features/market/domain/entities/quote.dart';
 import 'package:capira/features/portfolio/domain/entities/holding.dart';
 import 'package:decimal/decimal.dart';
@@ -43,6 +44,8 @@ class PortfolioSummary {
     this.unrealizedPnlPercent,
     this.dailyChange,
     this.dailyChangePercent,
+    this.totalCostUsd,
+    this.totalCostEur,
   });
 
   static final empty = PortfolioSummary(
@@ -69,6 +72,24 @@ class PortfolioSummary {
   final Decimal? unrealizedPnlPercent;
   final Decimal? dailyChange;
   final Decimal? dailyChangePercent;
+
+  /// [totalCost] in USD / EUR at each buy's own rate; `null` when any of
+  /// those holdings lacks a rate.
+  final Decimal? totalCostUsd;
+  final Decimal? totalCostEur;
+
+  Decimal? totalCostIn(DisplayCurrency currency) => switch (currency) {
+    DisplayCurrency.tryLira => totalCost,
+    DisplayCurrency.usd => totalCostUsd,
+    DisplayCurrency.eur => totalCostEur,
+  };
+
+  /// Value of the holdings [totalCost] covers (value − cost = P/L).
+  Decimal? get valueWithKnownCost {
+    final cost = totalCost;
+    final pnl = unrealizedPnl;
+    return cost == null || pnl == null ? null : cost + pnl;
+  }
 
   bool get isEmpty => holdings.isEmpty;
 }
