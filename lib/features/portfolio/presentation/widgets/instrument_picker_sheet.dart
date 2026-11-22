@@ -3,6 +3,7 @@ import 'package:capira/core/l10n/l10n.dart';
 import 'package:capira/core/theme/app_tokens.dart';
 import 'package:capira/core/theme/app_typography.dart';
 import 'package:capira/core/utils/formatters.dart';
+import 'package:capira/core/utils/search_text.dart';
 import 'package:capira/core/widgets/instrument_avatar.dart';
 import 'package:capira/features/market/domain/entities/quote.dart';
 import 'package:capira/features/market/domain/entities/stock_listing.dart';
@@ -149,8 +150,7 @@ class _InstrumentPickerSheetState extends ConsumerState<InstrumentPickerSheet> {
         ? funds
         : [
             for (final q in funds)
-              if (q.instrument.code.startsWith(_query) ||
-                  turkishUpperCase(q.name ?? '').contains(_query))
+              if (matchesSearch(_query, code: q.instrument.code, name: q.name))
                 q,
           ];
     if (funds.isEmpty) {
@@ -192,9 +192,7 @@ class _InstrumentPickerSheetState extends ConsumerState<InstrumentPickerSheet> {
         ? all
         : [
             for (final s in all)
-              if (s.symbol.startsWith(_query) ||
-                  turkishUpperCase(s.name).contains(_query))
-                s,
+              if (matchesSearch(_query, code: s.symbol, name: s.name)) s,
           ];
     final canUseTyped =
         _symbolPattern.hasMatch(_query) &&

@@ -3,6 +3,7 @@ import 'package:capira/core/l10n/failure_messages.dart';
 import 'package:capira/core/l10n/l10n.dart';
 import 'package:capira/core/theme/app_tokens.dart';
 import 'package:capira/core/utils/formatters.dart';
+import 'package:capira/core/utils/search_text.dart';
 import 'package:capira/core/widgets/app_card.dart';
 import 'package:capira/core/widgets/collapsible_section.dart';
 import 'package:capira/core/widgets/empty_state.dart';
@@ -450,8 +451,7 @@ class _SearchableAllSectionState extends State<_SearchableAllSection> {
         ? widget.quotes
         : [
             for (final q in widget.quotes)
-              if (q.instrument.code.startsWith(_query) ||
-                  turkishUpperCase(q.name ?? '').contains(_query))
+              if (matchesSearch(_query, code: q.instrument.code, name: q.name))
                 q,
           ];
     final shown = matches.take(_visible).toList();
